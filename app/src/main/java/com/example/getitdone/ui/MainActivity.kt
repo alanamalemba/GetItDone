@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding;
     private lateinit var database: GetItDoneDatabase
     private val taskDao: TaskDao by lazy { database.getTaskDao() }
+    private val tasksFragment: TasksFragment = TasksFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +38,7 @@ class MainActivity : AppCompatActivity() {
             }
         }.attach()
 
-        database = GetItDoneDatabase.createDatabase(this)
+        database = GetItDoneDatabase.getDatabaseInstance(this)
 
         setUpClickListeners()
     }
@@ -71,6 +72,7 @@ class MainActivity : AppCompatActivity() {
                 taskDao.createTask(task)
             }
             dialog.dismiss()
+            tasksFragment.fetchAllTasks()
 
         }
 
@@ -81,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         override fun getItemCount(): Int = 1
 
         override fun createFragment(position: Int): Fragment {
-            return TasksFragment()
+            return tasksFragment
         }
     }
 }

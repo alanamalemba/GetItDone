@@ -6,12 +6,9 @@ import androidx.room.PrimaryKey
 
 @Entity("tasks")
 data class Task(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val title: String,
     val description: String? = null,
-
-   @ColumnInfo("is_starred")
-    val isStarred: Boolean = false
+    @ColumnInfo("is_starred") val isStarred: Boolean = false,
+    @ColumnInfo("is_complete") val isComplete: Boolean = false
 )

@@ -11,12 +11,12 @@ import com.example.getitdone.data.TaskDao
 import com.example.getitdone.databinding.FragmentTasksBinding
 import kotlin.concurrent.thread
 
-class TasksFragment : Fragment() {
+class TasksFragment : Fragment(), TasksAdapter.TaskUpdatedListener {
 
     private lateinit var binding: FragmentTasksBinding
 
     private val taskDao: TaskDao by lazy {
-        GetItDoneDatabase.createDatabase(requireContext()).getTaskDao()
+        GetItDoneDatabase.getDatabaseInstance(requireContext()).getTaskDao()
     }
 
     override fun onCreateView(
@@ -29,11 +29,23 @@ class TasksFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        fetchAllTasks()
+    }
+
+    fun fetchAllTasks() {
         thread {
             val tasks = taskDao.getAllTasks()
             requireActivity().runOnUiThread {
-                binding.recyclerView.adapter = TasksAdapter(tasks)
+                binding.recyclerView.adapter = TasksAdapter(tasks, this)
             }
+        }
+    }
+
+    override fun onTaskUpdated(task: Task) {
+        thread {
+            taskDao.updateTask(task)
+
+            fetchAllTasks()
         }
     }
 }
