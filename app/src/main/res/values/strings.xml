@@ -3,4 +3,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="add_task">Add task</string>
+    <string name="new_task">New task</string>
+    <string name="add_details">Add details</string>
+    <string name="add_details_button">add details button</string>
+    <string name="star_button">star button</string>
+    <string name="save">Save</string>
 </resources>
