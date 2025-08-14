@@ -1,9 +1,7 @@
-package com.example.getitdone
+package com.example.getitdone.ui
 
-import TasksFragment
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -14,10 +12,10 @@ import com.example.getitdone.data.TaskDao
 import com.example.getitdone.databinding.ActivityMainBinding
 import com.example.getitdone.databinding.DialogAddTaskBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlin.concurrent.thread
 import androidx.core.view.isVisible
+import com.example.getitdone.ui.tasks.TasksFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding;
