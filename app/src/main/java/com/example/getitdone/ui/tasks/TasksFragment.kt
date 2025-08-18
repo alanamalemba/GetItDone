@@ -19,6 +19,8 @@ class TasksFragment : Fragment(), TasksAdapter.TaskUpdatedListener {
         GetItDoneDatabase.getDatabaseInstance(requireContext()).getTaskDao()
     }
 
+    private val tasksAdapter = TasksAdapter(this)
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -28,7 +30,7 @@ class TasksFragment : Fragment(), TasksAdapter.TaskUpdatedListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        binding.recyclerView.adapter = tasksAdapter
         fetchAllTasks()
     }
 
@@ -36,7 +38,7 @@ class TasksFragment : Fragment(), TasksAdapter.TaskUpdatedListener {
         thread {
             val tasks = taskDao.getAllTasks()
             requireActivity().runOnUiThread {
-                binding.recyclerView.adapter = TasksAdapter(tasks, this)
+                tasksAdapter.setTasks(tasks)
             }
         }
     }
@@ -44,7 +46,6 @@ class TasksFragment : Fragment(), TasksAdapter.TaskUpdatedListener {
     override fun onTaskUpdated(task: Task) {
         thread {
             taskDao.updateTask(task)
-
             fetchAllTasks()
         }
     }
