@@ -27,7 +27,9 @@ class TasksAdapter(private val listener: TaskUpdatedListener) :
     }
 
     fun setTasks(tasks: List<Task>) {
-        this.tasks = tasks
+        this.tasks = tasks.sortedBy {
+            it.isComplete
+        }
         notifyDataSetChanged()
     }
 
@@ -56,7 +58,6 @@ class TasksAdapter(private val listener: TaskUpdatedListener) :
                 val updatedTask = task.copy(isStarred = binding.checkboxStar.isChecked)
                 listener.onTaskUpdated(updatedTask)
             }
-
         }
     }
 
