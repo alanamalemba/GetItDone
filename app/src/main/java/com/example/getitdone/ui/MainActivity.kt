@@ -1,6 +1,8 @@
 package com.example.getitdone.ui
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -15,6 +17,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlin.concurrent.thread
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import com.example.getitdone.ui.tasks.TasksFragment
 
 class MainActivity : AppCompatActivity() {
@@ -50,33 +53,40 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showAddTaskDialog() {
-        val dialogBinding = DialogAddTaskBinding.inflate(layoutInflater)
+        DialogAddTaskBinding.inflate(layoutInflater).apply {
+            val dialog = BottomSheetDialog(this@MainActivity)
 
-        val dialog = BottomSheetDialog(this)
+            dialog.setContentView(root)
 
-        dialog.setContentView(dialogBinding.root)
+            buttonSave.isEnabled = false
 
+            editTextTaskTitle.addTextChangedListener { editable ->
 
-        dialogBinding.imageButtonDetails.setOnClickListener {
-            dialogBinding.editTextTaskDetails.visibility =
-                if (dialogBinding.editTextTaskDetails.isVisible) View.GONE else View.VISIBLE
-        }
+                buttonSave.isEnabled = !editable.isNullOrEmpty()
 
-        dialogBinding.buttonSave.setOnClickListener {
-            val task = Task(
-                title = dialogBinding.editTextTaskTitle.text.toString(),
-                description = dialogBinding.editTextTaskDetails.text.toString()
-            );
-
-            thread {
-                taskDao.createTask(task)
             }
-            dialog.dismiss()
-            tasksFragment.fetchAllTasks()
 
+            imageButtonDetails.setOnClickListener {
+                editTextTaskDetails.visibility =
+                    if (editTextTaskDetails.isVisible) View.GONE else View.VISIBLE
+            }
+
+            buttonSave.setOnClickListener {
+                val task = Task(
+                    title = editTextTaskTitle.text.toString(),
+                    description = editTextTaskDetails.text.toString()
+                );
+
+                thread {
+                    taskDao.createTask(task)
+                }
+                dialog.dismiss()
+                tasksFragment.fetchAllTasks()
+
+            }
+
+            dialog.show()
         }
-
-        dialog.show()
     }
 
     inner class PagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
