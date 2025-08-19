@@ -1,10 +1,10 @@
 package com.example.getitdone.ui
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -13,12 +13,11 @@ import com.example.getitdone.data.Task
 import com.example.getitdone.data.TaskDao
 import com.example.getitdone.databinding.ActivityMainBinding
 import com.example.getitdone.databinding.DialogAddTaskBinding
+import com.example.getitdone.ui.tasks.TasksFragment
+import com.example.getitdone.util.InputValidator
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlin.concurrent.thread
-import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
-import com.example.getitdone.ui.tasks.TasksFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding;
@@ -62,7 +61,7 @@ class MainActivity : AppCompatActivity() {
 
             editTextTaskTitle.addTextChangedListener { editable ->
 
-                buttonSave.isEnabled = checkIsInputValid(editable)
+                buttonSave.isEnabled = InputValidator.checkIsInputValid(editable.toString())
 
             }
 
@@ -87,10 +86,6 @@ class MainActivity : AppCompatActivity() {
 
             dialog.show()
         }
-    }
-
-    private fun checkIsInputValid(editable: Editable?):Boolean {
-       return !editable?.trim().isNullOrEmpty() && editable!!.trim().length > 1
     }
 
     inner class PagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
