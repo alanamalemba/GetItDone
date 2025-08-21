@@ -2,54 +2,50 @@ package com.example.getitdone.ui
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.getitdone.data.GetItDoneDatabase
-import com.example.getitdone.data.Task
-import com.example.getitdone.data.TaskDao
 import com.example.getitdone.databinding.ActivityMainBinding
 import com.example.getitdone.databinding.DialogAddTaskBinding
 import com.example.getitdone.ui.tasks.TasksFragment
 import com.example.getitdone.util.InputValidator
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlin.concurrent.thread
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding;
-    private lateinit var database: GetItDoneDatabase
-    private val taskDao: TaskDao by lazy { database.getTaskDao() }
+    private val viewModel: MainViewModel by viewModels()
     private val tasksFragment: TasksFragment = TasksFragment()
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        binding.viewPager2.adapter = PagerAdapter(this)
-        TabLayoutMediator(binding.tabLayout, binding.viewPager2) { tab, position ->
-            when (position) {
-                0 -> {
-                    tab.text = "Tasks"
+        binding = ActivityMainBinding.inflate(layoutInflater).apply {
+            viewPager2.adapter = PagerAdapter(this@MainActivity)
+            TabLayoutMediator(tabLayout, viewPager2) { tab, position ->
+                when (position) {
+                    0 -> {
+                        tab.text = "Tasks"
+                    }
                 }
-            }
-        }.attach()
-
-        database = GetItDoneDatabase.getDatabaseInstance(this)
-
-        setUpClickListeners()
-    }
-
-    private fun setUpClickListeners() {
-        binding.floatingActionButton.setOnClickListener {
-            showAddTaskDialog()
+            }.attach()
+            floatingActionButton.setOnClickListener { showAddTaskDialog() }
+            setContentView(root)
         }
+
+
     }
+
+
 
     private fun showAddTaskDialog() {
         DialogAddTaskBinding.inflate(layoutInflater).apply {
@@ -71,14 +67,12 @@ class MainActivity : AppCompatActivity() {
             }
 
             buttonSave.setOnClickListener {
-                val task = Task(
+
+                viewModel.createTask(
                     title = editTextTaskTitle.text.toString(),
                     description = editTextTaskDetails.text.toString()
-                );
+                )
 
-                thread {
-                    taskDao.createTask(task)
-                }
                 dialog.dismiss()
                 tasksFragment.fetchAllTasks()
 
