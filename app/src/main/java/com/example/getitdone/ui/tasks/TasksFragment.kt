@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.getitdone.data.model.Task
 import com.example.getitdone.databinding.FragmentTasksBinding
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class TasksFragment : Fragment(), TasksAdapter.TaskItemClickListener {
@@ -31,20 +32,19 @@ class TasksFragment : Fragment(), TasksAdapter.TaskItemClickListener {
         fetchAllTasks()
     }
 
-    fun fetchAllTasks() {
+    private fun fetchAllTasks() {
         lifecycleScope.launch {
-            val tasks = viewModel.fetchAllTasks()
-            tasksAdapter.setTasks(tasks)
+            viewModel.fetchAllTasks().collectLatest { tasks ->
+                tasksAdapter.setTasks(tasks)
+            }
         }
     }
 
     override fun onTaskUpdated(task: Task) {
         viewModel.updateTask(task)
-        fetchAllTasks()
     }
 
     override fun onTaskDeleted(task: Task) {
         viewModel.deleteTask(task)
-        fetchAllTasks()
     }
 }

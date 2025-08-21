@@ -24,7 +24,6 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
-    private val tasksFragment: TasksFragment = TasksFragment()
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,11 +40,7 @@ class MainActivity : AppCompatActivity() {
             floatingActionButton.setOnClickListener { showAddTaskDialog() }
             setContentView(root)
         }
-
-
     }
-
-
 
     private fun showAddTaskDialog() {
         DialogAddTaskBinding.inflate(layoutInflater).apply {
@@ -74,7 +69,6 @@ class MainActivity : AppCompatActivity() {
                 )
 
                 dialog.dismiss()
-                tasksFragment.fetchAllTasks()
 
             }
 
@@ -86,7 +80,7 @@ class MainActivity : AppCompatActivity() {
         override fun getItemCount(): Int = 1
 
         override fun createFragment(position: Int): Fragment {
-            return tasksFragment
+            return TasksFragment()
         }
     }
 }
