@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.example.getitdone.data.Task
+import com.example.getitdone.data.model.Task
 import com.example.getitdone.databinding.FragmentTasksBinding
 import kotlinx.coroutines.launch
 

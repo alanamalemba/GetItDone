@@ -4,9 +4,8 @@ import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.example.getitdone.data.Task
+import com.example.getitdone.data.model.Task
 import com.example.getitdone.databinding.ItemTaskBinding
 
 class TasksAdapter(private val listener: TaskItemClickListener) :
@@ -76,6 +75,6 @@ class TasksAdapter(private val listener: TaskItemClickListener) :
     interface TaskItemClickListener {
         fun onTaskUpdated(task: Task)
 
-        fun onTaskDeleted(task:Task)
+        fun onTaskDeleted(task: Task)
     }
 }

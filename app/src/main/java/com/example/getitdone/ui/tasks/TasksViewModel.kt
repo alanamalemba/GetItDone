@@ -3,27 +3,26 @@ package com.example.getitdone.ui.tasks
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.getitdone.GetItDoneApplication
-import com.example.getitdone.data.GetItDoneDatabase
-import com.example.getitdone.data.Task
+import com.example.getitdone.data.model.Task
 import kotlinx.coroutines.launch
-import kotlin.concurrent.thread
 
 class TasksViewModel : ViewModel() {
-    private val taskDao = GetItDoneApplication.taskDao
+
+    private val tasksRepository = GetItDoneApplication.taskRepository
 
     suspend fun fetchAllTasks(): List<Task> {
-        return taskDao.getAllTasks()
+        return tasksRepository.getTasks()
     }
 
     fun updateTask(task: Task) {
         viewModelScope.launch {
-            taskDao.updateTask(task)
+            tasksRepository.updateTask(task)
         }
     }
 
     fun deleteTask(task: Task) {
         viewModelScope.launch {
-            taskDao.deleteTask(task)
+            tasksRepository.deleteTask(task)
         }
     }
 }
