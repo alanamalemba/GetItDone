@@ -13,12 +13,16 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.getitdone.R
+import com.example.getitdone.data.model.TasksList
 import com.example.getitdone.databinding.ActivityMainBinding
 import com.example.getitdone.databinding.DialogAddTaskBinding
+import com.example.getitdone.databinding.DialogAddTasksListBinding
+import com.example.getitdone.databinding.TabButtonBinding
 import com.example.getitdone.ui.tasks.StarredTasksFragment
 import com.example.getitdone.ui.tasks.TasksFragment
 import com.example.getitdone.util.InputValidator
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -26,6 +30,7 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
+    private var currentTasksList: List<TasksList> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +38,7 @@ class MainActivity : AppCompatActivity() {
 
             lifecycleScope.launch {
                 viewModel.getTasksList().collectLatest { tasksLists ->
-
+                    currentTasksList = tasksLists
                     viewPager2.adapter = PagerAdapter(this@MainActivity, tasksLists.size + 2)
                     viewPager2.currentItem = 1
                     TabLayoutMediator(tabLayout, viewPager2) { tab, position ->
@@ -41,8 +46,11 @@ class MainActivity : AppCompatActivity() {
                             0 -> tab.icon =
                                 ContextCompat.getDrawable(this@MainActivity, R.drawable.icon_star)
 
-                            tasksLists.size + 1 -> tab.customView =
-                                Button(this@MainActivity).apply { text = "Add New List" }
+                            tasksLists.size + 1 -> {
+                                val buttonBinding = TabButtonBinding.inflate(layoutInflater)
+                                tab.customView = buttonBinding.root
+                                buttonBinding.root.setOnClickListener { showAddTasksListDialog() }
+                            }
 
                             else -> tab.text = tasksLists[position - 1].name
 
@@ -54,6 +62,14 @@ class MainActivity : AppCompatActivity() {
             floatingActionButton.setOnClickListener { showAddTaskDialog() }
             setContentView(root)
         }
+    }
+
+    private fun showAddTasksListDialog() {
+        val dialogBinding = DialogAddTasksListBinding.inflate(layoutInflater)
+
+        MaterialAlertDialogBuilder(this).setTitle("Add new list").setView(dialogBinding.root)
+            .setPositiveButton("Create") { dialog, _ -> viewModel.addNewTalkList(dialogBinding.editTextListName.text.toString()) }
+            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }.show()
     }
 
     private fun showAddTaskDialog() {
@@ -76,11 +92,15 @@ class MainActivity : AppCompatActivity() {
             }
 
             buttonSave.setOnClickListener {
-
-                viewModel.createTask(
-                    title = editTextTaskTitle.text.toString(),
-                    description = editTextTaskDetails.text.toString()
-                )
+                if(currentTasksList.isNotEmpty()){dialog.dismiss()
+                    val selectedTasksListId =
+                        currentTasksList[binding.viewPager2.currentItem - 1].id
+                    viewModel.createTask(
+                        title = editTextTaskTitle.text.toString(),
+                        description = editTextTaskDetails.text.toString(),
+                        listId = selectedTasksListId
+                    )
+                }
 
                 dialog.dismiss()
 

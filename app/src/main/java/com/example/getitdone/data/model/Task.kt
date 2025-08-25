@@ -20,5 +20,5 @@ data class Task(
     val description: String? = null,
     @ColumnInfo("is_starred") val isStarred: Boolean = false,
     @ColumnInfo("is_complete") val isComplete: Boolean = false,
-    @ColumnInfo(name = "list_id") val listId: Int
+    @ColumnInfo(name = "list_id") val listId: Int? = null
 )

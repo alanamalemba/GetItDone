@@ -8,4 +8,6 @@
     <string name="add_details_button">add details button</string>
     <string name="star_button">star button</string>
     <string name="save">Save</string>
+    <string name="add_new_list">ADD NEW LIST</string>
+    <string name="task_name">Task Name</string>
 </resources>

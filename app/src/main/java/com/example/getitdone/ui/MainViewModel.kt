@@ -15,13 +15,18 @@ class MainViewModel : ViewModel() {
         return taskRepository.getTasksList()
     }
 
-    fun createTask(title: String, description: String?) {
+    fun createTask(title: String, description: String?, listId: Int) {
         val task = Task(
-            title = title, description = description
+            title = title, description = description, listId = listId
         )
 
         viewModelScope.launch {
             taskRepository.createTask(task)
         }
+    }
+
+    fun addNewTalkList(listName: String) {
+
+        viewModelScope.launch { taskRepository.createTaskList(listName) }
     }
 }
