@@ -11,7 +11,8 @@ class GetItDoneApplication : Application() {
         super.onCreate()
         val database = GetItDoneDatabase.getDatabaseInstance(this)
         val taskDao = database.getTaskDao()
-        taskRepository = TaskRepository(taskDao)
+        val taskListDao = database.getTasksListDao()
+        taskRepository = TaskRepository(taskDao, taskListDao)
     }
 
     companion object {
